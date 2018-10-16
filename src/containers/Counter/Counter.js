@@ -23,6 +23,7 @@ class Counter extends Component {
             case 'sub':
                 this.setState( ( prevState ) => { return { counter: prevState.counter - value } } )
                 break;
+            default:return
         }
     }
 
@@ -31,21 +32,39 @@ class Counter extends Component {
             <div>
                 <CounterOutput value={this.props.ctr} />
                 <CounterControl label="Increment" clicked={this.props.onIncrementCounter} />
-                <CounterControl label="Decrement" clicked={() => this.counterChangedHandler( 'dec' )}  />
-                <CounterControl label="Add 5" clicked={() => this.counterChangedHandler( 'add', 5 )}  />
-                <CounterControl label="Subtract 5" clicked={() => this.counterChangedHandler( 'sub', 5 )}  />
+                <CounterControl label="Decrement" clicked={this.props.decrementCounter}  />
+                <CounterControl label="Add 5" clicked={this.props.incrementFive}  />
+                <CounterControl label="Subtract 5" clicked={this.props.decrementFive}  />
+
+                <hr/>
+                <button onClick={this.props.onStoreResult}>Store Result</button>
+                
+                <ul>
+                    {this.props.storedResults.map(strResult => (
+                        <li onClick={this.props.deleteStoreResult}>{strResult}</li>
+                    ))}
+                </ul>
+
             </div>
         );
     }
 }
 
 const mapStateToProps = state => {
-    return {ctr: state.counter}
+    return {
+        ctr: state.counter,
+        storedResults: state.results
+    }
 };
 
 const mapDispatchToProps = dispatch => {
     return{
-      onIncrementCounter: () => dispatch({type:'INCREMENT'})
+      onIncrementCounter: () => dispatch({type:'INCREMENT'}),
+      decrementCounter: () => dispatch({type:'DECREMENT'}),
+      incrementFive: () => dispatch({type:'ADD', value:5}),
+      decrementFive: () => dispatch({type:'SUBSTRACT', value:5}),
+      onStoreResult: () => dispatch({type:'STORE_RESULT'}),
+      deleteStoreResult: () => dispatch({type:'DELETE_RESULT'})
     };
 };
 
